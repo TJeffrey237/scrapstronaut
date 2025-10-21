@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://cjt4bgcxeperl"]
+
+[ext_resource type="Script" uid="uid://byou25uuqypss" path="res://scripts/Circuit.cs" id="1_3c3rk"]
+[ext_resource type="Texture2D" uid="uid://b7nnndw7kl2v8" path="res://assets/circuit.png" id="2_3c3rk"]
+[ext_resource type="PackedScene" uid="uid://b70pp2hnob5nu" path="res://scenes/bolt_particles.tscn" id="3_u6hd3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yygdb"]
+size = Vector2(24, 22)
+
+[node name="Circuit" type="Area2D" groups=["circuits"]]
+script = ExtResource("1_3c3rk")
+pulseSpeed = 4.0
+pulseAmplitude = 0.2
+metadata/_edit_group_ = true
+
+[node name="bolts" parent="." instance=ExtResource("3_u6hd3")]
+lifetime = 0.3
+local_coords = false
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(2, 2)
+texture = ExtResource("2_3c3rk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_yygdb")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
