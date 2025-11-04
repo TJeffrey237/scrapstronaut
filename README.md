@@ -1,23 +1,25 @@
-# Circuitry Part 1 (Assignment 4) Description
-The first iteration of this game is simple 2D platformer where the player must avoid a virus that chases them around the circuit board. The player has to collect pieces of themselves in order to increase the score. Getting hit means resetting the score and restarting from the beginning!
+# Assignment 5 Description
+This is a simple demo game where a player (CharacterBody2D) can look at and interact with some different properties.
 
-# How to Run?
-This project can be opened in the editor after downloading and be run from there.
-
-# Controls
+## Controls
 - Left Arrow - Move left
 - Right Arrow - Move right
-- Spacebar - Jump 
+- Up Arrow - Move Up
+- Down Arrow - Move Down
 
-# Assets
-All art assets were designed and implemented by me, there is no external work here.
+## How Does the Shader Work?
+The canvas item shader itself applies two different effects to the particles: wave distortion and color gradient calculations. The particle itself is a simple texture of an outlined circle.
 
-# Requirements
-- Entire map is made using a TileSet, this is done with a TileMapLayer node with custom tiles used for the background and platforms.
-- Player and Enemy characters have proper movement physics with collisions. There is collision between characters, the environment, and the various circuits that are scattered around the map.
-- Player and Enemy both have animated sprites. The player has animations for idle and walking animations, which are flipped based on movement. The enemy also has a walking animation that plays as it chases the player.
-- Enemy will continuously pathfind towards player, this is done by creating navigation layers over the background tiles which allows the enemy full access over the map. The enemy is also placed on a separate mask layer to make collisions with the environment smoother.
-- Particle effects are shown when a circuit is collected and when the player is hit. The particles are shown as small bursts of either electricity or smoke. This is accomplished with the spread and one-shot properties of the particle material.
-- Collectible circuit boards are shown around the map with animations. Players can pick these up to increment the score by colliding with them. Getting hit by the enemy will cause all circuit locations to reset.
-- UI feedback for score that increments after each circuit is picked up. Getting hit will reset the score to 0.
-- All art and assets used for this project are entirely original. This paired with some camera smoothing effects and borders helps the game to feel more polished.
+The particle controller script allows us to edit the parameters for this shader which allows us to use time as a way to change the wave intensity and rotate through various colors.
+
+## Physics Properties
+The physics chain cs script will create a chain of linked segments. To do this, it will first define an anchor point and then iteratively instantiating the RigidBody2D segments that are vertically offset to form a straight line.
+
+In order to connect each segment, I utilize PinJoint2D to connect them at a given point and allow them to freely rotate around that point. The very first segment created will be attached to the static anchor point but each segment afterwards will have it's joint connected at the halfwaypoint between the two segments.
+
+The player is able to freely interact with this chain by colliding with any of it's segments. The collision is primarily handled automatically through Godot but the ApplyForceToSegment method allows us to apply a force randomly to the chain segments if needed.
+
+## Raycast Detection
+The raycast script is a way to detect when a player is colliding with a line, much like the LOS for an enemy NPC. The first part of the script initializes the ray, the visual effects, and the alarm timer. Setting up the raycast involves creating a RayCast2D and setting a range for it's maximum length. The visual effects use a Line2D which is colored red or green depending on the alarm. The alarm timer is meant as a way to reset the alarm's state back to default after a given time.
+
+Detecting collision with the way in the script is accomplished by consistently updating it's physics frame and checking for a collision. If a collision occurs, then the laser is visually updated to reflect the collision point. Furthermore, if the collision is the player, then the alarm is triggered and the console prints out the location of the collision and the laser turns red. Afterwards, the laser will not be reset until the alarm timer times out and the player is no longer in range.
